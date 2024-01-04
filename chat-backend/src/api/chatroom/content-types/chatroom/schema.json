@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "chatrooms",
+  "info": {
+    "singularName": "chatroom",
+    "pluralName": "chatrooms",
+    "displayName": "chatroom"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "roomName": {
+      "type": "string"
+    }
+  }
+}
