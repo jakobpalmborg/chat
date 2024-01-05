@@ -10,6 +10,7 @@
         <nuxt-link to="/">Home</nuxt-link>
         <nuxt-link to="/chat">Chat</nuxt-link>
         <nuxt-link to="/login">Login</nuxt-link>
+        <nuxt-link to="/register">Register</nuxt-link>
         <nuxt-link to="/about">About</nuxt-link>
       </li>
     </ul>
