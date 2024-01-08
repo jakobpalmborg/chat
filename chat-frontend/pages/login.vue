@@ -46,6 +46,7 @@ async function onLogin() {
     const data = await response.json();
     token.value = data.jwt;
     user.value = data.user.username;
+    navigateTo('/chat');
   } catch (e) {
     console.log("Something went wrong with the fetch call!");
     console.log(e);
