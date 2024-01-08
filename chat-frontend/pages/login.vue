@@ -14,8 +14,6 @@
       />
       <Btn />
     </form>
-
-    {{ user }}
   </div>
 </template>
 
