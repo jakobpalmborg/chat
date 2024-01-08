@@ -1,10 +1,11 @@
 <template>
   <div>
-    <h1>Username, lets start chat</h1>
+    <h1>{{ user }}, lets start chat</h1>
     <form class="flex flex-col" action="">
       <label for="room">Room:</label>
       <input type="text" id="room" class="bg-slate-200 mb-1" />
       <Btn />
+      <div></div>
     </form>
 
     <h1>Chat room name</h1>
@@ -26,3 +27,7 @@
     </form>
   </div>
 </template>
+
+<script setup>
+const user = useCookie("user");
+</script>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Create Account</h1>
-    <form @submit.prevent="onSubmit" class="flex flex-col">
+    <form @submit.prevent="onRegister" class="flex flex-col">
       <label for="username">User Name:</label>
       <input
         v-model="username"
@@ -21,7 +21,6 @@
       />
       <Btn />
     </form>
-    {{ username }}
   </div>
 </template>
 
@@ -32,7 +31,8 @@ const username = ref("");
 const email = ref("");
 const password = ref("");
 
-async function onSubmit() {
+
+async function onRegister() {
   const payload = {
     username: username.value,
     email: email.value,
@@ -54,6 +54,7 @@ async function onSubmit() {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const data = await response.json();
+    
   } catch (e) {
     console.log("Something went wrong with the fetch call!");
     console.log(e);
