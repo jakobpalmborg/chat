@@ -30,7 +30,8 @@ import { ref } from "vue";
 const username = ref("");
 const email = ref("");
 const password = ref("");
-
+const token = useCookie("token");
+const user = useCookie("user");
 
 async function onRegister() {
   const payload = {
@@ -54,6 +55,8 @@ async function onRegister() {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const data = await response.json();
+    token.value = data.jwt;
+    user.value = data.user.username;
     
   } catch (e) {
     console.log("Something went wrong with the fetch call!");
