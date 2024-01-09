@@ -18,12 +18,11 @@
 
       <h1>Chat room name</h1>
       <ul>
-        <li>chat message</li>
-        <li>chat message</li>
-        <li>chat message</li>
+        <li v-for="message in messageArray">{{ message }}</li>
       </ul>
-      <form action="" class="flex flex-col">
+      <form @submit.prevent="sendMessage" class="flex flex-col">
         <textarea
+          v-model="message"
           name="textMsg"
           id="textMsg"
           cols="45"
@@ -34,16 +33,34 @@
         <Btn />
       </form>
     </div>
-    <h3 class="mt-10">get messages:</h3>
+
+    <h3 class="mt-10">get chatHistory(not implemented):</h3>
     <Btn @click="getMessage()"></Btn>
-    <div>{{ msg }}</div>
+    <div>{{ chatHistory }}</div>
   </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
+import { io } from "socket.io-client";
+
 const user = useCookie("user");
 const token = useCookie("token");
-const msg = ref("");
+const message = ref("");
+const messageArray = ref([]);
+const chatHistory = ref("");
+const socket = io("ws://localhost:1337");
+
+function sendMessage() {
+  console.log(message.value);
+
+  socket.emit("message", message.value);
+  message.value = "";
+}
+
+socket.on("message", (data) => {
+  messageArray.value.push(data);
+});
 
 const headers = new Headers({
   Authorization: `Bearer ${token.value}`,
@@ -58,10 +75,10 @@ async function getMessage() {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const data = await response.json();
-    msg.value = data.data;
+    chatHistory.value = data.data;
   } catch (e) {
     console.log("Something went wrong with the fetch call!");
-    msg.value = "You have to login to get messages";
+    chatHistory.value = "You have to login to get messages";
     console.log(e);
   }
 }
