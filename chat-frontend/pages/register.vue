@@ -1,8 +1,15 @@
 <template>
   <div>
-    <h1>Login</h1>
-
-    <form @submit.prevent="onLogin" class="flex flex-col">
+    <h1>Create Account</h1>
+    <form @submit.prevent="onRegister" class="flex flex-col">
+      <label for="username">User Name:</label>
+      <input
+        v-model="username"
+        type="text"
+        required
+        id="username"
+        class="bg-slate-200"
+      />
       <label for="email">Email:</label>
       <input v-model="email" type="email" required class="bg-slate-200" />
       <label for="password">Password:</label>
@@ -19,25 +26,31 @@
 
 <script setup>
 import { ref } from "vue";
+
+const username = ref("");
 const email = ref("");
 const password = ref("");
 const token = useCookie("token");
 const user = useCookie("user");
 
-async function onLogin() {
+async function onRegister() {
   const payload = {
-    identifier: email.value,
+    username: username.value,
+    email: email.value,
     password: password.value,
   };
 
   const headers = new Headers({ "content-type": "application/json" });
 
   try {
-    const response = await fetch("http://localhost:1337/api/auth/local", {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(payload),
-    });
+    const response = await fetch(
+      "http://localhost:1337/api/auth/local/register",
+      {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(payload),
+      }
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -45,6 +58,7 @@ async function onLogin() {
     token.value = data.jwt;
     user.value = data.user.username;
     navigateTo('/chat');
+    
   } catch (e) {
     console.log("Something went wrong with the fetch call!");
     console.log(e);
