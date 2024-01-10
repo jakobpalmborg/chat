@@ -20,9 +20,11 @@
       <ul>
         <li v-for="message in messageArray">{{ message }}</li>
       </ul>
+      <p class="activity">activity: {{ activity }}</p>
       <form @submit.prevent="sendMessage" class="flex flex-col">
         <textarea
           v-model="message"
+          @keydown="onKeyActivity"
           name="textMsg"
           id="textMsg"
           cols="45"
@@ -49,17 +51,28 @@ const token = useCookie("token");
 const message = ref("");
 const messageArray = ref([]);
 const chatHistory = ref("");
+const activity = ref("");
 const socket = io("ws://localhost:1337");
 
 function sendMessage() {
-  console.log(message.value);
-
   socket.emit("message", message.value);
   message.value = "";
 }
 
 socket.on("message", (data) => {
+  activity.value = "";
   messageArray.value.push(data);
+});
+
+function onKeyActivity() {
+  socket.emit("activity", socket.id.substring(0, 5));
+}
+
+socket.on("activity", (name) => {
+  activity.value = `${name} is typing...`;
+  setTimeout(() => {
+    activity.value = "";
+  }, 2000);
 });
 
 const headers = new Headers({
