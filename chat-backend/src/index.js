@@ -19,6 +19,16 @@ module.exports = {
    * run jobs, or perform some special logic.
    */
   bootstrap(/*{ strapi }*/) {
+
+    const ADMIN = "admin";
+
+    // mock users state
+    const UsersState = {
+      users: [],
+      setUsers: function(newUsersArray) {
+        this.users = newUsersArray
+      }
+    }
     
     var io = require("socket.io")(strapi.server.httpServer, {
       cors: {
@@ -26,30 +36,123 @@ module.exports = {
       }
 
     });
+
     io.on('connection', socket => {
       console.log(`User ${socket.id} connected`)
-      
+    
       // to user when connecting
-      socket.emit('message', "welcome to chatapp!")
+      socket.emit('message', buildMsg(ADMIN, "Welcome to chatapp!"))
       
-      //to all others when connecting
-      socket.broadcast.emit('message', `User ${socket.id.substring(0, 5)} connected`)
+      socket.on('enterRoom', ({name, room}) => {
+        
+        //Leave previous room
+        const prevRoom = getUser(socket.id)?.room
+        
+        if (prevRoom) {
+          socket.leave(prevRoom)
+          io.to(prevRoom).emit('message', buildMsg(ADMIN, `${name} has left the room`))
+        }
 
-      // listening for message event
-      socket.on('message', data => {
-        console.log(data)
-        io.emit('message', `${socket.id.substring(0, 5)}: ${data}`)
+        const user = activateUser(socket.id, name, room)
+
+        if(prevRoom) {
+          io.to(prevRoom).emit('userList', {
+            users: getUsersInRoom(prevRoom)
+          })
+        }
+
+        // join room
+        socket.join(user.room)
+
+        // To user who joined
+        socket.emit('message', buildMsg(ADMIN, `You have joined the ${user.room} chat room`))
+
+        // To everyone else
+        socket.broadcast.to(user.room).emit('message', buildMsg(ADMIN, `${user.name} has joined the room`))
+
+        //Update user list for room
+        io.to(user.room).emit('userList', {
+          users: getUsersInRoom(user.room)
+        })
+
+        //update rooms list for everyone
+        io.emit('roomList', {
+          rooms: getAllActiveRooms()
+        }) 
       })
 
-      //when user disconnects to all others
-      socket.on('disconnect', () => {
-        socket.broadcast.emit('message', `User ${socket.id.substring(0, 5)} disconnected`)
+       //when user disconnects to all others
+       socket.on('disconnect', () => {
+        const user = getUser(socket.id)
+        userLeavesApp(socket.id)
+        
+        if (user) {
+          io.to(user.room).emit('message', buildMsg(ADMIN, `${user.name} has left the room`))
+        
+          io.to(user.room).emit('userList', {
+            users: getUsersInRoom(user.room)          
+          })
+
+          io.emit('roomList', {
+            rooms: getAllActiveRooms()
+          })
+        }
+
+        console.log(`User ${socket.id} disconnected`)
+      })
+
+      // listening for message event
+      socket.on('message', ({name, text}) => {
+        const room = getUser(socket.id)?.room
+        if (room) {
+          io.to(room).emit('message', buildMsg(name, text))
+        }
       })
 
       // listen for activity
       socket.on('activity', (name) => {
-        socket.broadcast.emit('activity', name)
+        const room = getUser(socket.id)?.room
+        if(room) {
+          socket.broadcast.to(room).emit('activity', name)
+        }
       })
     })
+
+    // functions for sockets
+    function buildMsg(name, text) {
+      return{
+        name,
+        text,
+        time: Date.now()
+      }
+    }
+
+    function activateUser(id, name, room) {
+      const user = { id, name, room}
+      UsersState.setUsers([
+        ...UsersState.users.filter(user => user.id !== id),
+        user
+      ])
+      return user
+    }
+
+    function userLeavesApp(id) {
+      UsersState.setUsers(
+        UsersState.users.filter(user => user.id !== id)
+      )
+    }
+
+    function getUser(id) {
+      return UsersState.users.find(user => user.id === id)
+    }
+
+    function getUsersInRoom(room) {
+      return UsersState.users.filter(user => user.room === room)
+      }
+
+    function getAllActiveRooms() {
+      const activeRoomsArray = Array.from(new Set(UsersState.users.map(user => user.room)))
+      return activeRoomsArray
+      }
   },
 };

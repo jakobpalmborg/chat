@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- message for users NOT logged in -->
     <div v-if="user == '' || user == undefined">
       <p class="block">
         <nuxt-link to="/login">LOGIN</nuxt-link> or
@@ -7,38 +8,57 @@
       </p>
     </div>
 
+    <!-- form for joining chat -->
     <div v-else>
-      <h1>{{ user }}, lets start chat</h1>
-      <form class="flex flex-col" action="">
-        <label for="room">Room:</label>
-        <input type="text" id="room" class="bg-slate-200 mb-1" />
-        <Btn />
-        <div></div>
-      </form>
+      <div v-if="!chatRoomActivated">
+        <h1>{{ user }}, lets start chat</h1>
+        <form @submit.prevent="enterRoom" class="flex flex-col">
+          <label for="room">Room:</label>
+          <input
+            v-model="chatRoom"
+            type="text"
+            id="room"
+            class="bg-slate-200 mb-1"
+          />
+          <Btn />
+        </form>
+      </div>
 
-      <h1>Chat room name</h1>
+      <!-- the Chat -->
+      <div v-else>
+        <h1>Room: {{ chatRoom }}</h1>
+        <ul>
+          <li v-for="message in messageArray">{{ message }}</li>
+        </ul>
+        <p class="activity">activity: {{ activity }}</p>
+        <form @submit.prevent="sendMessage" class="flex flex-col">
+          <textarea
+            v-model="messageInput"
+            @keydown="onKeyActivity"
+            name="textMsg"
+            id="textMsg"
+            cols="45"
+            rows="3"
+            class="bg-slate-200 mb-1"
+            placeholder="start typing..."
+          ></textarea>
+          <Btn />
+        </form>
+        <h2>Users in room:</h2>
+        <ul>
+          <li v-for="user in userList">{{ user.name }}</li>
+        </ul>
+      </div>
+      <h2>Active rooms:</h2>
       <ul>
-        <li v-for="message in messageArray">{{ message }}</li>
+        <li v-for="room in roomList">{{ room }}</li>
       </ul>
-      <p class="activity">activity: {{ activity }}</p>
-      <form @submit.prevent="sendMessage" class="flex flex-col">
-        <textarea
-          v-model="message"
-          @keydown="onKeyActivity"
-          name="textMsg"
-          id="textMsg"
-          cols="45"
-          rows="3"
-          class="bg-slate-200 mb-1"
-          placeholder="start typing..."
-        ></textarea>
-        <Btn />
-      </form>
     </div>
 
-    <h3 class="mt-10">get chatHistory(not implemented):</h3>
+    <!-- to get chat history -->
+    <!-- <h3 class="mt-10">get chatHistory(not implemented):</h3>
     <Btn @click="getMessage()"></Btn>
-    <div>{{ chatHistory }}</div>
+    <div>{{ chatHistory }}</div> -->
   </div>
 </template>
 
@@ -48,24 +68,45 @@ import { io } from "socket.io-client";
 
 const user = useCookie("user");
 const token = useCookie("token");
-const message = ref("");
+const messageInput = ref("");
 const messageArray = ref([]);
 const chatHistory = ref("");
 const activity = ref("");
+const chatRoom = ref("");
+const userList = ref();
+const roomList = ref();
+const chatRoomActivated = ref(false);
 const socket = io("ws://localhost:1337");
 
 function sendMessage() {
-  socket.emit("message", message.value);
-  message.value = "";
+  if (messageInput.value)
+    socket.emit("message", {
+      name: user.value,
+      text: messageInput.value,
+    });
+  messageInput.value = "";
+  textMsg.focus();
+}
+
+function enterRoom() {
+  messageArray.value = [];
+  if (chatRoom.value) {
+    socket.emit("enterRoom", {
+      name: user.value,
+      room: chatRoom.value,
+    });
+  }
+  chatRoomActivated.value = true;
 }
 
 socket.on("message", (data) => {
   activity.value = "";
+  //const { name, text, time } = data;
   messageArray.value.push(data);
 });
 
 function onKeyActivity() {
-  socket.emit("activity", socket.id.substring(0, 5));
+  socket.emit("activity", user.value);
 }
 
 socket.on("activity", (name) => {
@@ -74,6 +115,27 @@ socket.on("activity", (name) => {
     activity.value = "";
   }, 2000);
 });
+
+socket.on("userList", ({ users }) => {
+  showUsers(users);
+});
+
+socket.on("roomList", ({ rooms }) => {
+  showRooms(rooms);
+});
+
+function showUsers(users) {
+  if (users) {
+    userList.value = users;
+  }
+}
+
+function showRooms(rooms) {
+  //console.log(`rooms: ${rooms}`);
+  if (rooms) {
+    roomList.value = rooms;
+  }
+}
 
 const headers = new Headers({
   Authorization: `Bearer ${token.value}`,
