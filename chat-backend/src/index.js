@@ -78,7 +78,10 @@ module.exports = {
         //update rooms list for everyone
         io.emit('roomList', {
           rooms: getAllActiveRooms()
-        }) 
+        })
+        
+        saveRoom(room);
+        
       })
 
        //when user disconnects to all others
@@ -103,11 +106,12 @@ module.exports = {
 
       // listening for message event
       socket.on('message', ({name, text}) => {
-        saveMessage()
+        
         const room = getUser(socket.id)?.room
         if (room) {
           io.to(room).emit('message', buildMsg(name, text))
         }
+        saveMessage(name, text, room)
       })
 
       // listen for activity
@@ -156,22 +160,50 @@ module.exports = {
       return activeRoomsArray
       }
 
-
-      async function saveMessage() {
-        const entry = await strapi.entityService.create("api::message.message",  {
-          data: {
-            text: "this is text",
-            chatroom: {connect: [2]
+    async function saveMessage(name, text, room) {
+      // get user id
+      const users = await strapi.plugins['users-permissions'].services.user.fetchAll({ name });
+      const user = users.length > 0 ? users[0] : null;
+      
+      // get room id
+      let roomInDatabase 
+      roomInDatabase = await strapi.db.query("api::chatroom.chatroom").findMany({where: { 
+        roomName: room
+      }})
+      const roomId = parseInt(roomInDatabase[0].id)
+      
+      // save message
+      const entry = await strapi.entityService.create("api::message.message",  {
+        data: {
+          text: text,
+          chatroom: {connect: [roomId]
             },
-            users_permissions_user: {connect: [9],
+            users_permissions_user: {connect: [user.id]
           },
           type: "userMsg"
-          },
-      })
-      
+          }
+        })
+    
       }
 
 
+      async function saveRoom(room) {
+        // check if room is in database
+        let roomInDatabase = "" 
+        roomInDatabase = await strapi.db.query("api::chatroom.chatroom").findMany({where: { 
+          roomName: room
+        }})
+
+        // if room is not in database, add room
+        if(roomInDatabase == "") {
+        await strapi.entityService.create("api::chatroom.chatroom", {
+          data: {
+            roomName: room
+          }
+        })
+       }
+
+    }
 
   },
 };

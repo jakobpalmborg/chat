@@ -4,7 +4,8 @@
   "info": {
     "singularName": "chatroom",
     "pluralName": "chatrooms",
-    "displayName": "chatroom"
+    "displayName": "chatroom",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -12,7 +13,9 @@
   "pluginOptions": {},
   "attributes": {
     "roomName": {
-      "type": "string"
+      "type": "string",
+      "unique": true,
+      "required": true
     }
   }
 }

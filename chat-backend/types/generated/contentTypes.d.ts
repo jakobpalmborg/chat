@@ -362,85 +362,6 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
-export interface ApiChatroomChatroom extends Schema.CollectionType {
-  collectionName: 'chatrooms';
-  info: {
-    singularName: 'chatroom';
-    pluralName: 'chatrooms';
-    displayName: 'chatroom';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    roomName: Attribute.String;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::chatroom.chatroom',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::chatroom.chatroom',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiMessageMessage extends Schema.CollectionType {
-  collectionName: 'messages';
-  info: {
-    singularName: 'message';
-    pluralName: 'messages';
-    displayName: 'message';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    text: Attribute.Text &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        minLength: 1;
-        maxLength: 4096;
-      }>;
-    chatroom: Attribute.Relation<
-      'api::message.message',
-      'oneToOne',
-      'api::chatroom.chatroom'
-    >;
-    users_permissions_user: Attribute.Relation<
-      'api::message.message',
-      'oneToOne',
-      'plugin::users-permissions.user'
-    >;
-    admin_user: Attribute.Relation<
-      'api::message.message',
-      'oneToOne',
-      'admin::user'
-    >;
-    type: Attribute.Enumeration<['userMsg', 'adminMsg']> & Attribute.Required;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::message.message',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::message.message',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -847,6 +768,86 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiChatroomChatroom extends Schema.CollectionType {
+  collectionName: 'chatrooms';
+  info: {
+    singularName: 'chatroom';
+    pluralName: 'chatrooms';
+    displayName: 'chatroom';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    roomName: Attribute.String & Attribute.Required & Attribute.Unique;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::chatroom.chatroom',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::chatroom.chatroom',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiMessageMessage extends Schema.CollectionType {
+  collectionName: 'messages';
+  info: {
+    singularName: 'message';
+    pluralName: 'messages';
+    displayName: 'message';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    text: Attribute.Text &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        minLength: 1;
+        maxLength: 4096;
+      }>;
+    chatroom: Attribute.Relation<
+      'api::message.message',
+      'oneToOne',
+      'api::chatroom.chatroom'
+    >;
+    users_permissions_user: Attribute.Relation<
+      'api::message.message',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    admin_user: Attribute.Relation<
+      'api::message.message',
+      'oneToOne',
+      'admin::user'
+    >;
+    type: Attribute.Enumeration<['userMsg', 'adminMsg']> & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::message.message',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::message.message',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -857,8 +858,6 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
-      'api::chatroom.chatroom': ApiChatroomChatroom;
-      'api::message.message': ApiMessageMessage;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
@@ -867,6 +866,8 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::chatroom.chatroom': ApiChatroomChatroom;
+      'api::message.message': ApiMessageMessage;
     }
   }
 }
