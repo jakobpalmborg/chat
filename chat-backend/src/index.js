@@ -18,7 +18,7 @@ module.exports = {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  bootstrap(/*{ strapi }*/) {
+  bootstrap({ strapi }) {
 
     const ADMIN = "admin";
 
@@ -103,6 +103,7 @@ module.exports = {
 
       // listening for message event
       socket.on('message', ({name, text}) => {
+        saveMessage()
         const room = getUser(socket.id)?.room
         if (room) {
           io.to(room).emit('message', buildMsg(name, text))
@@ -154,5 +155,23 @@ module.exports = {
       const activeRoomsArray = Array.from(new Set(UsersState.users.map(user => user.room)))
       return activeRoomsArray
       }
+
+
+      async function saveMessage() {
+        const entry = await strapi.entityService.create("api::message.message",  {
+          data: {
+            text: "this is text",
+            chatroom: {connect: [2]
+            },
+            users_permissions_user: {connect: [9],
+          },
+          type: "userMsg"
+          },
+      })
+      
+      }
+
+
+
   },
 };
