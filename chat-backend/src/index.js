@@ -97,7 +97,7 @@ module.exports = {
             rooms: getAllActiveRooms()
           })
         }
-
+          
         console.log(`User ${socket.id} disconnected`)
       })
 

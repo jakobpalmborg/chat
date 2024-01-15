@@ -19,6 +19,7 @@
             type="text"
             id="room"
             class="bg-slate-200 mb-1"
+            required
           />
           <Btn />
         </form>
@@ -41,6 +42,7 @@
             rows="3"
             class="bg-slate-200 mb-1"
             placeholder="start typing..."
+            required
           ></textarea>
           <Btn />
         </form>
@@ -57,14 +59,14 @@
 
     <!-- to get chat history -->
     <!-- <h3 class="mt-10">get chatHistory(not implemented):</h3>
-    <Btn @click="getMessage()"></Btn>
-    <div>{{ chatHistory }}</div> -->
+        <Btn @click="getMessage()"></Btn>
+        <div>{{ chatHistory }}</div> -->
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { io } from "socket.io-client";
+import { socket } from "../services/socketio.service";
 
 const user = useCookie("user");
 const token = useCookie("token");
@@ -76,7 +78,6 @@ const chatRoom = ref("");
 const userList = ref();
 const roomList = ref();
 const chatRoomActivated = ref(false);
-const socket = io("ws://localhost:1337");
 
 function sendMessage() {
   if (messageInput.value)
@@ -101,7 +102,6 @@ function enterRoom() {
 
 socket.on("message", (data) => {
   activity.value = "";
-  //const { name, text, time } = data;
   messageArray.value.push(data);
 });
 
@@ -131,8 +131,7 @@ function showUsers(users) {
 }
 
 function showRooms(rooms) {
-  //console.log(`rooms: ${rooms}`);
-  if (rooms) {
+   if (rooms) {
     roomList.value = rooms;
   }
 }
