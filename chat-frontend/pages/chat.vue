@@ -28,39 +28,63 @@
       <!-- the Chat -->
       <div v-else>
         <h1>Room: {{ chatRoom }}</h1>
-        <ul>
-          <li v-for="message in messageArray">{{ message }}</li>
-        </ul>
-        <p class="activity">activity: {{ activity }}</p>
-        <form @submit.prevent="sendMessage" class="flex flex-col">
-          <textarea
-            v-model="messageInput"
-            @keydown="onKeyActivity"
-            name="textMsg"
-            id="textMsg"
-            cols="45"
-            rows="3"
-            class="bg-slate-200 mb-1"
-            placeholder="start typing..."
-            required
-          ></textarea>
-          <Btn />
-        </form>
-        <h2>Users in room:</h2>
-        <ul>
-          <li v-for="user in userList">{{ user.name }}</li>
-        </ul>
+        <!-- to get chat history -->
+        <h3 class="mt-10">get chatHistory:</h3>
+        <Btn @click="getChatHistory()"></Btn>
+        <div>
+          <ul v-if="chatHistory.length > 0">
+            <li v-for="message in chatHistory">
+              <span>
+                {{
+                  message.attributes.users_permissions_user.data.attributes
+                    .username
+                }}
+              </span>
+              <span>
+                {{ message.attributes.text }}
+              </span>
+              <span>
+                {{ message.attributes.createdAt }}
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Chat display -->
       </div>
-      <h2>Active rooms:</h2>
       <ul>
-        <li v-for="room in roomList">{{ room }}</li>
+        <li v-for="message in messageArray">
+          {{ message.name }} {{ message.text }} {{ message.time }}
+        </li>
+      </ul>
+      <p class="activity">activity: {{ activity }}</p>
+
+      <!-- chat input -->
+      <form @submit.prevent="sendMessage" class="flex flex-col">
+        <textarea
+          v-model="messageInput"
+          @keydown="onKeyActivity"
+          name="textMsg"
+          id="textMsg"
+          cols="45"
+          rows="3"
+          class="bg-slate-200 mb-1"
+          placeholder="start typing..."
+          required
+        ></textarea>
+        <Btn />
+      </form>
+
+      <!-- information -->
+      <h2>Users in room:</h2>
+      <ul>
+        <li v-for="user in userList">{{ user.name }}</li>
       </ul>
     </div>
-
-    <!-- to get chat history -->
-    <!-- <h3 class="mt-10">get chatHistory(not implemented):</h3>
-        <Btn @click="getMessage()"></Btn>
-        <div>{{ chatHistory }}</div> -->
+    <h2>Active rooms:</h2>
+    <ul>
+      <li v-for="room in roomList">{{ room }}</li>
+    </ul>
   </div>
 </template>
 
@@ -78,6 +102,8 @@ const chatRoom = ref("");
 const userList = ref();
 const roomList = ref();
 const chatRoomActivated = ref(false);
+let paginationStart = 0;
+let paginationLimit = 5;
 
 function sendMessage() {
   if (messageInput.value)
@@ -131,7 +157,7 @@ function showUsers(users) {
 }
 
 function showRooms(rooms) {
-   if (rooms) {
+  if (rooms) {
     roomList.value = rooms;
   }
 }
@@ -140,20 +166,28 @@ const headers = new Headers({
   Authorization: `Bearer ${token.value}`,
 });
 
-async function getMessage() {
+async function getChatHistory() {
   try {
-    const response = await fetch("http://localhost:1337/api/messages", {
-      headers,
-    });
+    const response = await fetch(
+      `http://localhost:1337/api/messages?populate=*&filters[chatroom][roomName][$eq]=${chatRoom.value}&pagination[start]=${paginationStart}&pagination[limit]=${paginationLimit}`,
+      {
+        headers,
+      }
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const data = await response.json();
+
     chatHistory.value = data.data;
   } catch (e) {
     console.log("Something went wrong with the fetch call!");
     chatHistory.value = "You have to login to get messages";
     console.log(e);
   }
+
+  // paginationStart += 5;
+  paginationLimit += 5;
+  console.log(chatHistory.value);
 }
 </script>
