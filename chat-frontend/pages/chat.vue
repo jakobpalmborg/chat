@@ -1,12 +1,6 @@
 <template>
   <div>
-    <!-- message for users NOT logged in -->
-    <div v-if="user == '' || user == undefined">
-      <p class="block">
-        <nuxt-link to="/login">LOGIN</nuxt-link> or
-        <nuxt-link to="/register">REGISTER</nuxt-link> an account to start chat.
-      </p>
-    </div>
+    <MessageForUserNotLoggedIn v-if="user == '' || user == undefined" />
 
     <!-- form for joining chat -->
     <div v-else>
