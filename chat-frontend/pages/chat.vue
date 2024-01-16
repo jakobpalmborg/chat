@@ -97,14 +97,13 @@ const user = useCookie("user");
 const token = useCookie("token");
 const messageInput = ref("");
 const messageArray = ref([]);
-const chatHistory = ref("");
+const chatHistory = ref([]);
 const activity = ref("");
 const chatRoom = ref("");
 const userList = ref();
 const roomList = ref();
 const chatRoomActivated = ref(false);
 let paginationStart = 0;
-let paginationLimit = 5;
 
 function sendMessage() {
   if (messageInput.value)
@@ -170,7 +169,7 @@ const headers = new Headers({
 async function getChatHistory() {
   try {
     const response = await fetch(
-      `http://localhost:1337/api/messages?populate=*&filters[chatroom][roomName][$eq]=${chatRoom.value}&pagination[start]=${paginationStart}&pagination[limit]=${paginationLimit}`,
+      `http://localhost:1337/api/messages?populate=*&filters[chatroom][roomName][$eq]=${chatRoom.value}&sort=createdAt:desc&pagination[start]=${paginationStart}&pagination[limit]=5`,
       {
         headers,
       }
@@ -179,17 +178,15 @@ async function getChatHistory() {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const data = await response.json();
-
-    chatHistory.value = data.data;
+    //sort the data and update array
+    const reversedData = data.data.reverse();
+    chatHistory.value = [...reversedData, ...chatHistory.value];
   } catch (e) {
     console.log("Something went wrong with the fetch call!");
     chatHistory.value = "You have to login to get messages";
     console.log(e);
   }
-
-  // paginationStart += 5;
-  paginationLimit += 5;
-  console.log(chatHistory.value);
+  paginationStart += 5;
 }
 
 const formatDate = (dateStr) => {
