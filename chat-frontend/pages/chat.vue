@@ -44,7 +44,7 @@
                 {{ message.attributes.text }}
               </span>
               <span>
-                {{ message.attributes.createdAt }}
+                {{ formatDate(message.attributes.createdAt) }}
               </span>
             </li>
           </ul>
@@ -54,7 +54,8 @@
       </div>
       <ul>
         <li v-for="message in messageArray">
-          {{ message.name }} {{ message.text }} {{ message.time }}
+          {{ message.name }} {{ message.text }}
+          {{ formatDate(message.time) }}
         </li>
       </ul>
       <p class="activity">activity: {{ activity }}</p>
@@ -190,4 +191,19 @@ async function getChatHistory() {
   paginationLimit += 5;
   console.log(chatHistory.value);
 }
+
+const formatDate = (dateStr) => {
+  let date = new Date(dateStr);
+  let options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+  return date
+    .toLocaleDateString("sv-SE", options)
+    .replace(/\//g, "-")
+    .replace(",", "");
+};
 </script>

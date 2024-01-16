@@ -128,7 +128,7 @@ module.exports = {
       return{
         name,
         text,
-        time: Date.now()
+        time: new Date(Date.now())
       }
     }
 
