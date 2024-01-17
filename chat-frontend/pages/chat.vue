@@ -15,6 +15,7 @@
       <!-- the Chat -->
       <div v-else>
         <h1>Room: {{ chatRoom }}</h1>
+        
         <!-- to get chat history -->
         <h3 class="mt-10">get chatHistory:</h3>
         <Btn @click="getChatHistory()"></Btn>
@@ -166,18 +167,5 @@ async function getChatHistory() {
   paginationStart += 5;
 }
 
-const formatDate = (dateStr) => {
-  let date = new Date(dateStr);
-  let options = {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-  return date
-    .toLocaleDateString("sv-SE", options)
-    .replace(/\//g, "-")
-    .replace(",", "");
-};
+
 </script>
