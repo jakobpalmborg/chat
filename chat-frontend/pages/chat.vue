@@ -45,10 +45,7 @@
       </form>
 
       <!-- information -->
-      <h2>Users in room:</h2>
-      <ul>
-        <li v-for="user in userList">{{ user.name }}</li>
-      </ul>
+      <UsersInRoom />
     </div>
     <ActiveRooms />
   </div>
@@ -61,14 +58,10 @@ import JoinChatForm from "~/components/JoinChatForm.vue";
 import ChatHistory from "~/components/ChatHistory.vue";
 
 const user = useCookie("user");
-
 const messageInput = ref("");
 const messageArray = ref([]);
-
 const activity = ref("");
 const chatRoom = ref("");
-const userList = ref();
-
 const chatRoomActivated = ref(false);
 
 function sendMessage() {
@@ -96,14 +89,4 @@ socket.on("activity", (name) => {
     activity.value = "";
   }, 2000);
 });
-
-socket.on("userList", ({ users }) => {
-  showUsers(users);
-});
-
-function showUsers(users) {
-  if (users) {
-    userList.value = users;
-  }
-}
 </script>
