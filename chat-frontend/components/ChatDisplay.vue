@@ -9,18 +9,14 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { socket } from "../services/socketio.service";
 
 const activity = ref("");
-
-const { messageArray } = defineProps({
-  messageArray: Array,
-});
+const messageArray = ref([]);
 
 socket.on("message", (data) => {
   activity.value = "";
-  messageArray.push(data);
+  messageArray.value.push(data);
 });
 
 socket.on("activity", (name) => {
