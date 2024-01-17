@@ -12,7 +12,6 @@
         @updateChatRoom="chatRoom = $event"
       />
 
-      <!-- the Chat -->
       <div v-else>
         <h1>Room: {{ chatRoom }}</h1>
 
@@ -28,23 +27,7 @@
       </ul>
       <p class="activity">activity: {{ activity }}</p>
 
-      <!-- chat input -->
-      <form @submit.prevent="sendMessage" class="flex flex-col">
-        <textarea
-          v-model="messageInput"
-          @keydown="onKeyActivity"
-          name="textMsg"
-          id="textMsg"
-          cols="45"
-          rows="3"
-          class="bg-slate-200 mb-1"
-          placeholder="start typing..."
-          required
-        ></textarea>
-        <Btn />
-      </form>
-
-      <!-- information -->
+      <MessageInput />
       <UsersInRoom />
     </div>
     <ActiveRooms />
@@ -58,30 +41,15 @@ import JoinChatForm from "~/components/JoinChatForm.vue";
 import ChatHistory from "~/components/ChatHistory.vue";
 
 const user = useCookie("user");
-const messageInput = ref("");
 const messageArray = ref([]);
 const activity = ref("");
 const chatRoom = ref("");
 const chatRoomActivated = ref(false);
 
-function sendMessage() {
-  if (messageInput.value)
-    socket.emit("message", {
-      name: user.value,
-      text: messageInput.value,
-    });
-  messageInput.value = "";
-  textMsg.focus();
-}
-
 socket.on("message", (data) => {
   activity.value = "";
   messageArray.value.push(data);
 });
-
-function onKeyActivity() {
-  socket.emit("activity", user.value);
-}
 
 socket.on("activity", (name) => {
   activity.value = `${name} is typing...`;
