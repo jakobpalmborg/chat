@@ -774,13 +774,12 @@ export interface ApiChatroomChatroom extends Schema.CollectionType {
     singularName: 'chatroom';
     pluralName: 'chatrooms';
     displayName: 'chatroom';
-    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    roomName: Attribute.String & Attribute.Required & Attribute.Unique;
+    roomName: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
