@@ -50,14 +50,12 @@
         <li v-for="user in userList">{{ user.name }}</li>
       </ul>
     </div>
-    <h2>Active rooms:</h2>
-    <ul>
-      <li v-for="room in roomList">{{ room }}</li>
-    </ul>
+    <ActiveRooms />
   </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
 import { socket } from "../services/socketio.service";
 import JoinChatForm from "~/components/JoinChatForm.vue";
 import ChatHistory from "~/components/ChatHistory.vue";
@@ -70,7 +68,7 @@ const messageArray = ref([]);
 const activity = ref("");
 const chatRoom = ref("");
 const userList = ref();
-const roomList = ref();
+
 const chatRoomActivated = ref(false);
 
 function sendMessage() {
@@ -103,19 +101,9 @@ socket.on("userList", ({ users }) => {
   showUsers(users);
 });
 
-socket.on("roomList", ({ rooms }) => {
-  showRooms(rooms);
-});
-
 function showUsers(users) {
   if (users) {
     userList.value = users;
-  }
-}
-
-function showRooms(rooms) {
-  if (rooms) {
-    roomList.value = rooms;
   }
 }
 </script>
