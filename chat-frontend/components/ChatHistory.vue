@@ -1,5 +1,5 @@
 <template>
-  <h3 class="mt-10">get chatHistory:</h3>
+  <h3>get chatHistory:</h3>
   <Btn @click="getChatHistory()"></Btn>
   <div>
     <ul v-if="chatHistory.length > 0">
