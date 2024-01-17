@@ -2,22 +2,15 @@
   <div>
     <MessageForUserNotLoggedIn v-if="user == '' || user == undefined" />
 
-    <!-- form for joining chat -->
     <div v-else>
-      <div v-if="!chatRoomActivated">
-        <h1>{{ user }}, lets start chat</h1>
-        <form @submit.prevent="enterRoom" class="flex flex-col">
-          <label for="room">Room:</label>
-          <input
-            v-model="chatRoom"
-            type="text"
-            id="room"
-            class="bg-slate-200 mb-1"
-            required
-          />
-          <Btn />
-        </form>
-      </div>
+      <JoinChatForm
+        v-if="!chatRoomActivated"
+        :chatRoom="chatRoom"
+        :chatRoomActivated="chatRoomActivated"
+        :messageArray="messageArray"
+        @updateChatRoomActivated="chatRoomActivated = $event"
+        @updateChatRoom="chatRoom = $event"
+      />
 
       <!-- the Chat -->
       <div v-else>
@@ -86,6 +79,7 @@
 <script setup>
 import { ref } from "vue";
 import { socket } from "../services/socketio.service";
+import JoinChatForm from "~/components/JoinChatForm.vue";
 
 const user = useCookie("user");
 const token = useCookie("token");
@@ -107,17 +101,6 @@ function sendMessage() {
     });
   messageInput.value = "";
   textMsg.focus();
-}
-
-function enterRoom() {
-  messageArray.value = [];
-  if (chatRoom.value) {
-    socket.emit("enterRoom", {
-      name: user.value,
-      room: chatRoom.value,
-    });
-  }
-  chatRoomActivated.value = true;
 }
 
 socket.on("message", (data) => {
