@@ -15,28 +15,8 @@
       <!-- the Chat -->
       <div v-else>
         <h1>Room: {{ chatRoom }}</h1>
-        
-        <!-- to get chat history -->
-        <h3 class="mt-10">get chatHistory:</h3>
-        <Btn @click="getChatHistory()"></Btn>
-        <div>
-          <ul v-if="chatHistory.length > 0">
-            <li v-for="message in chatHistory">
-              <span>
-                {{
-                  message.attributes.users_permissions_user.data.attributes
-                    .username
-                }}
-              </span>
-              <span>
-                {{ message.attributes.text }}
-              </span>
-              <span>
-                {{ formatDate(message.attributes.createdAt) }}
-              </span>
-            </li>
-          </ul>
-        </div>
+
+        <ChatHistory :chatRoom="chatRoom" />
 
         <!-- Chat display -->
       </div>
@@ -78,21 +58,20 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { socket } from "../services/socketio.service";
 import JoinChatForm from "~/components/JoinChatForm.vue";
+import ChatHistory from "~/components/ChatHistory.vue";
 
 const user = useCookie("user");
-const token = useCookie("token");
+
 const messageInput = ref("");
 const messageArray = ref([]);
-const chatHistory = ref([]);
+
 const activity = ref("");
 const chatRoom = ref("");
 const userList = ref();
 const roomList = ref();
 const chatRoomActivated = ref(false);
-let paginationStart = 0;
 
 function sendMessage() {
   if (messageInput.value)
@@ -139,33 +118,4 @@ function showRooms(rooms) {
     roomList.value = rooms;
   }
 }
-
-const headers = new Headers({
-  Authorization: `Bearer ${token.value}`,
-});
-
-async function getChatHistory() {
-  try {
-    const response = await fetch(
-      `http://localhost:1337/api/messages?populate=*&filters[chatroom][roomName][$eq]=${chatRoom.value}&sort=createdAt:desc&pagination[start]=${paginationStart}&pagination[limit]=5`,
-      {
-        headers,
-      }
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const data = await response.json();
-    //sort the data and update array
-    const reversedData = data.data.reverse();
-    chatHistory.value = [...reversedData, ...chatHistory.value];
-  } catch (e) {
-    console.log("Something went wrong with the fetch call!");
-    chatHistory.value = "You have to login to get messages";
-    console.log(e);
-  }
-  paginationStart += 5;
-}
-
-
 </script>

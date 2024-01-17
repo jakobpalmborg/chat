@@ -29,7 +29,6 @@ const props = defineProps({
 });
 
 function enterRoom() {
-  console.log(props.chatRoom);
   if (props.chatRoom) {
     socket.emit("enterRoom", {
       name: user.value,
