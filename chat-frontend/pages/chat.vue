@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 class="text-center">Chat</h1>
     <MessageForUserNotLoggedIn v-if="user == '' || user == undefined" />
     <div v-else>
       <JoinChatForm
@@ -16,8 +17,9 @@
         <MessageInput />
         <UsersInRoom />
       </div>
+      <ActiveRooms />
     </div>
-    <ActiveRooms />
+    
   </div>
 </template>
 
