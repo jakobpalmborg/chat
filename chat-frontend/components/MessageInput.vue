@@ -1,17 +1,18 @@
 <template>
-  <form @submit.prevent="sendMessage" class="flex flex-col">
-    <textarea
+  <form @submit.prevent="sendMessage" class="flex justify-between ">
+    <input
+      type="text"
       v-model="messageInput"
       @keydown="onKeyActivity"
       name="textMsg"
       id="textMsg"
       cols="45"
       rows="3"
-      class="bg-slate-200 mb-1"
+      class="mb-3 h-9 border border-black border-t-0 border-l-0 border-r-0 p-1 w-full mr-3  "
       placeholder="start typing..."
       required
-    ></textarea>
-    <Btn />
+    />
+    <Btn text=">" class="w-10" />
   </form>
 </template>
 

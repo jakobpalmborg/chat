@@ -1,19 +1,33 @@
 <template>
-  <h3>get chatHistory:</h3>
-  <Btn @click="getChatHistory()"></Btn>
+  <div class="text-center">
+    <Btn text="^ more messages ^" @click="getChatHistory()"></Btn>
+  </div>
   <div>
     <ul v-if="chatHistory.length > 0">
-      <li v-for="message in chatHistory">
-        <span>
-          {{
-            message.attributes.users_permissions_user.data.attributes.username
-          }}
-        </span>
+      <li
+        v-for="message in chatHistory"
+        class="p-2 rounded-2xl mt-1 overflow-auto"
+        :class="
+          message.attributes.users_permissions_user.data.attributes.username ===
+          user
+            ? 'ml-10 bg-green-300  '
+            : message.name !== 'admin'
+            ? 'mr-10 bg-red-300'
+            : ''
+        "
+      >
+        <div class="flex justify-between text-xs">
+          <span>
+            {{
+              message.attributes.users_permissions_user.data.attributes.username
+            }}
+          </span>
+          <span>
+            {{ formatDate(message.attributes.createdAt) }}
+          </span>
+        </div>
         <span>
           {{ message.attributes.text }}
-        </span>
-        <span>
-          {{ formatDate(message.attributes.createdAt) }}
         </span>
       </li>
     </ul>
@@ -21,7 +35,6 @@
 </template>
 
 <script setup>
-
 const token = useCookie("token");
 const chatHistory = ref([]);
 let paginationStart = 0;

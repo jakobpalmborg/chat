@@ -1,17 +1,17 @@
 <template>
   <div>
-    <h1>{{ user }}, lets start chat</h1>
+    <h3>{{ user }},</h3>
     <form @submit.prevent="enterRoom" class="flex flex-col">
-      <label for="room">Room:</label>
+      <label for="room">Join or create room:</label>
       <input
         :value="chatRoom"
         @input="updateChatRoom"
         type="text"
         id="room"
-        class="bg-slate-200 mb-1"
+        class="mb-3 h-9 border border-black border-t-0 border-l-0 border-r-0 w-72 p-1"
         required
       />
-      <Btn />
+      <Btn text="Join"/>
     </form>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <h2>Users in room:</h2>
+  <h4>Users in room:</h4>
   <ul>
     <li v-for="user in userList">{{ user.name }}</li>
   </ul>
