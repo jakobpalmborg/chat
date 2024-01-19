@@ -22,7 +22,7 @@ module.exports = {
 
     const ADMIN = "admin";
 
-    // mock users state
+    // TODO save state in database?
     const UsersState = {
       users: [],
       setUsers: function(newUsersArray) {
@@ -30,6 +30,7 @@ module.exports = {
       }
     }
     
+    // @ts-ignore
     var io = require("socket.io")(strapi.server.httpServer, {
       cors: {
         origin: process.env.NODE_ENV === "production" ? false : ["http://localhost:3000", "http://127.0.0.1:3000"]
