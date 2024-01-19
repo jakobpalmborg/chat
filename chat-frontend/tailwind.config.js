@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require('tailwindcss/defaultTheme')
 export default {
   content: ["./components/**/*.{js,vue,ts}",
   "./layouts/**/*.vue",
@@ -7,6 +8,9 @@ export default {
   "./app.vue",
   "./error.vue",],
   theme: {
+    fontFamily: {
+      montserrat: ["Montserrat", ...defaultTheme.fontFamily.sans],
+    },
     extend: {},
   },
   plugins: [],

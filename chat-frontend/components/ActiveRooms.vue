@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h2>Active rooms:</h2>
+  <div class="bg-black text-white p-4 m-4 rounded-lg shadow-lg text-center">
+    <h4 class="mt-2">Active rooms:</h4>
     <ul>
       <li v-for="room in roomList">{{ room }}</li>
     </ul>

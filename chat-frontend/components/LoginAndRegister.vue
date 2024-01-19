@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="border font-bold text-md p-4 rounded-lg shadow-lg m-3">
     <form @submit.prevent="onRegisterOrLogin" class="flex flex-col">
       <label v-if="$route.name === 'register'" for="username">User Name:</label>
       <input
@@ -8,18 +8,25 @@
         type="text"
         required
         id="username"
-        class="bg-slate-200"
+        class="mb-3 h-9 border border-black border-t-0 border-l-0 border-r-0 w-72 p-1"
       />
       <label for="email">Email:</label>
-      <input v-model="email" type="email" required class="bg-slate-200" />
+      <input
+        v-model="email"
+        type="email"
+        required
+        class="mb-3 h-9 border border-black border-t-0 border-l-0 border-r-0 w-72 p-1"
+      />
       <label for="password">Password:</label>
       <input
         v-model="password"
         type="password"
         required
-        class="bg-slate-200 mb-1"
+        class="mb-3 h-9 border border-black border-t-0 border-l-0 border-r-0 w-72 p-1"
       />
-      <Btn />
+      
+      <Btn v-if="$route.name === 'register'" text="Register"/>
+      <Btn v-else text="Login" />
     </form>
   </div>
 </template>

@@ -1,19 +1,41 @@
 <template>
-  <h3>get chatHistory:</h3>
-  <Btn @click="getChatHistory()"></Btn>
+  <div class="text-center">
+    <Btn text="^ more messages ^" @click="getChatHistory()"></Btn>
+  </div>
   <div>
     <ul v-if="chatHistory.length > 0">
-      <li v-for="message in chatHistory">
-        <span>
-          {{
-            message.attributes.users_permissions_user.data.attributes.username
-          }}
-        </span>
+      <li
+        v-for="message in chatHistory"
+        class="p-2 rounded-2xl mt-4 overflow-auto"
+        :class="
+          message.attributes.users_permissions_user.data.attributes.username ===
+          user
+            ? 'ml-10 border border-solid border-gray-400 shadow-lg'
+            : message.name !== 'admin'
+            ? 'mr-10 border border-gray-400 shadow-lg'
+            : ''
+        "
+      >
+        <div class="flex justify-between text-s">
+          
+          <span class="font-bold"
+            :class="
+              message.attributes.users_permissions_user.data.attributes
+                .username === user
+                ? 'bg-green-700 text-white pt-1 pr-2 pb-1 pl-2 rounded-full '
+                : 'bg-purple-700   text-white pt-1 pr-2 pb-1 pl-2 rounded-full'
+            "
+          >
+            {{
+              message.attributes.users_permissions_user.data.attributes.username
+            }}
+          </span>
+          <span class="text-xs">
+            {{ formatDate(message.attributes.createdAt) }}
+          </span>
+        </div>
         <span>
           {{ message.attributes.text }}
-        </span>
-        <span>
-          {{ formatDate(message.attributes.createdAt) }}
         </span>
       </li>
     </ul>
@@ -21,13 +43,15 @@
 </template>
 
 <script setup>
-
 const token = useCookie("token");
+const user = useCookie("user");
+
 const chatHistory = ref([]);
 let paginationStart = 0;
 
 const props = defineProps({
   chatRoom: String,
+  timeUserJoinedChat: String,
 });
 
 const headers = new Headers({
@@ -37,7 +61,7 @@ const headers = new Headers({
 async function getChatHistory() {
   try {
     const response = await fetch(
-      `http://localhost:1337/api/messages?populate=*&filters[chatroom][roomName][$eq]=${props.chatRoom}&sort=createdAt:desc&pagination[start]=${paginationStart}&pagination[limit]=5`,
+      `http://localhost:1337/api/messages?populate=*&filters[chatroom][roomName][$eq]=${props.chatRoom}&filters[createdAt][$lt]=${props.timeUserJoinedChat}&sort=createdAt:desc&pagination[start]=${paginationStart}&pagination[limit]=5`,
       {
         headers,
       }
