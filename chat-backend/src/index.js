@@ -162,8 +162,9 @@ module.exports = {
 
     async function saveMessage(name, text, room) {
       // get user id
-      const users = await strapi.plugins['users-permissions'].services.user.fetchAll({ name });
-      const user = users.length > 0 ? users[0] : null;
+      const user = await strapi.db.query('plugin::users-permissions.user').findOne({
+        where: { username: name }
+      })
       
       // get room id
       let roomInDatabase 
@@ -185,7 +186,6 @@ module.exports = {
         })
     
       }
-
 
       async function saveRoom(room) {
         // check if room is in database
