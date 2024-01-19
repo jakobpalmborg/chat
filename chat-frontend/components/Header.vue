@@ -1,5 +1,5 @@
 <template>
-  <div class="h-32 bg-black text-white p-3">
+  <div class="bg-black text-white p-3">
     <div class="flex justify-between">
       <nuxt-link class="flex hover:opacity-85" to="/">
         <IconsChat />
@@ -20,7 +20,16 @@
         <nuxt-link>Logout</nuxt-link>
       </button>
     </div>
-    <ul class="flex justify-evenly text-white text-2xl lg:text-3xl font-bold">
+    <div class="md:hidden flex flex-row-reverse">
+      <button @click="openOrCloseMobileMenu">
+        <IconsCross v-if="mobileMenu" class="text-2xl" />
+        <IconsHamburger v-else class="text-2xl" />
+      </button>
+    </div>
+    <ul
+      class="flex flex-col md:flex-row justify-evenly text-white text-2xl lg:text-3xl font-bold md:flex"
+      :class="{ hidden: !mobileMenu }"
+    >
       <Navbar />
     </ul>
   </div>
@@ -29,9 +38,15 @@
 <script setup>
 const user = useCookie("user");
 const token = useCookie("token");
+const mobileMenu = ref(false);
 
 function clearCookies() {
   user.value = "";
   token.value = "";
+}
+
+function openOrCloseMobileMenu() {
+  mobileMenu.value = !mobileMenu.value;
+  console.log(mobileMenu.value);
 }
 </script>
