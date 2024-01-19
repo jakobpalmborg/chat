@@ -6,23 +6,31 @@
     <ul v-if="chatHistory.length > 0">
       <li
         v-for="message in chatHistory"
-        class="p-2 rounded-2xl mt-1 overflow-auto"
+        class="p-2 rounded-2xl mt-4 overflow-auto"
         :class="
           message.attributes.users_permissions_user.data.attributes.username ===
           user
-            ? 'ml-10 bg-green-300  '
+            ? 'ml-10 border border-solid border-gray-400 shadow-lg'
             : message.name !== 'admin'
-            ? 'mr-10 bg-red-300'
+            ? 'mr-10 border border-gray-400 shadow-lg'
             : ''
         "
       >
-        <div class="flex justify-between text-xs">
-          <span>
+        <div class="flex justify-between text-s">
+          
+          <span class="font-bold"
+            :class="
+              message.attributes.users_permissions_user.data.attributes
+                .username === user
+                ? 'bg-green-700 text-white pt-1 pr-2 pb-1 pl-2 rounded-full '
+                : 'bg-purple-700   text-white pt-1 pr-2 pb-1 pl-2 rounded-full'
+            "
+          >
             {{
               message.attributes.users_permissions_user.data.attributes.username
             }}
           </span>
-          <span>
+          <span class="text-xs">
             {{ formatDate(message.attributes.createdAt) }}
           </span>
         </div>
