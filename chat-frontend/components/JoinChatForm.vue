@@ -11,7 +11,7 @@
         class="mb-3 h-9 border border-black border-t-0 border-l-0 border-r-0 w-72 p-1"
         required
       />
-      <Btn text="Join"/>
+      <Btn text="Join" />
     </form>
   </div>
 </template>
@@ -20,6 +20,7 @@
 import { socket } from "../services/socketio.service";
 
 const user = useCookie("user");
+
 
 const emit = defineEmits(["updateChatRoomActivated", "updateChatRoom"]);
 

@@ -30,13 +30,21 @@
 <script setup>
 import { socket } from "../services/socketio.service";
 const user = useCookie("user");
-
 const activity = ref("");
 const messageArray = ref([]);
+
+const props = defineProps({
+  timeUserJoinedChat: String,
+});
+
+const emit = defineEmits(["updateTime"]);
+
+
 
 socket.on("message", (data) => {
   activity.value = "";
   messageArray.value.push(data);
+  emit("updateTime", data.time);
 });
 
 socket.on("activity", (name) => {

@@ -14,8 +14,14 @@
         <div v-else>
           <h3>Room: {{ chatRoom }}</h3>
           <div class="border shadow-lg p-3 rounded-lg m-3">
-            <ChatHistory :chatRoom="chatRoom" />
-            <ChatDisplay />
+            <ChatHistory
+              :chatRoom="chatRoom"
+              :timeUserJoinedChat="timeUserJoinedChat"
+            />
+            <ChatDisplay
+              :timeUserJoinedChat="timeUserJoinedChat"
+              @updateTime="updateTime"
+            />
           </div>
           <MessageInput />
           <UsersInRoom />
@@ -30,4 +36,9 @@
 const user = useCookie("user");
 const chatRoom = ref("");
 const chatRoomActivated = ref(false);
+const timeUserJoinedChat = ref("");
+
+const updateTime = (newTime) => {
+  timeUserJoinedChat.value = newTime;
+};
 </script>

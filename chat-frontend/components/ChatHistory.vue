@@ -36,11 +36,14 @@
 
 <script setup>
 const token = useCookie("token");
+const user = useCookie("user");
+
 const chatHistory = ref([]);
 let paginationStart = 0;
 
 const props = defineProps({
   chatRoom: String,
+  timeUserJoinedChat: String,
 });
 
 const headers = new Headers({
@@ -50,7 +53,7 @@ const headers = new Headers({
 async function getChatHistory() {
   try {
     const response = await fetch(
-      `http://localhost:1337/api/messages?populate=*&filters[chatroom][roomName][$eq]=${props.chatRoom}&sort=createdAt:desc&pagination[start]=${paginationStart}&pagination[limit]=5`,
+      `http://localhost:1337/api/messages?populate=*&filters[chatroom][roomName][$eq]=${props.chatRoom}&filters[createdAt][$lt]=${props.timeUserJoinedChat}&sort=createdAt:desc&pagination[start]=${paginationStart}&pagination[limit]=5`,
       {
         headers,
       }
