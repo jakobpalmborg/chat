@@ -1,9 +1,19 @@
 <template>
   <div
-    class="hidden md:block h-32 w-full bg-black text-white text-center pt-1 bottom-0 absolute"
+    class="hidden md:flex md:justify-around fixed w-full bg-black text-white text-center p-2 bottom-0"
   >
-    <ul class="flex flex-col justify-evenly">
-      <Navbar />
-    </ul>
+    <div>
+      <ul class="flex flex-col">
+        <Navbar />
+      </ul>
+    </div>
+
+    <IconsChat />
+    <div class="mt-5">
+      <a href="https://github.com/jakobpalmborg">
+        <IconsGithub class="text-2xl m-auto" />
+        <p>jakobpalmborg</p>
+      </a>
+    </div>
   </div>
 </template>
