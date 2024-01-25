@@ -33,9 +33,9 @@ module.exports = {
     // @ts-ignore
     var io = require("socket.io")(strapi.server.httpServer, {
       cors: {
-        origin: process.env.NODE_ENV === "production" ? ["https://chat-sand-pi.vercel.app/"] : ["http://localhost:3000", "http://127.0.0.1:3000"]
+        origin:"https://chat-sand-pi.vercel.app"
+        //  process.env.NODE_ENV === "production" ? ["https://chat-sand-pi.vercel.app/"] : ["http://localhost:3000", "http://127.0.0.1:3000"]
       }
-
     });
 
     io.on('connection', socket => {
