@@ -33,7 +33,7 @@ module.exports = {
     // @ts-ignore
     var io = require("socket.io")(strapi.server.httpServer, {
       cors: {
-        origin: "https://chat-sand-pi.vercel.app/"
+        origin: "https://chat-sand-pi.vercel.app"
       }
     });
 
