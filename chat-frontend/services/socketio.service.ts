@@ -6,7 +6,7 @@ const config = useRuntimeConfig();
 class SocketIOService {
   socket: Socket;
   constructor() {
-    this.socket = io(config.public.strapiWS);
+    this.socket = io(`${config.public.strapiWS}`);
   }
 }
 
