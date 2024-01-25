@@ -24,8 +24,8 @@
         required
         class="mb-3 h-9 border border-black border-t-0 border-l-0 border-r-0 w-72 p-1"
       />
-      
-      <Btn v-if="$route.name === 'register'" text="Register"/>
+
+      <Btn v-if="$route.name === 'register'" text="Register" />
       <Btn v-else text="Login" />
     </form>
   </div>
@@ -38,6 +38,7 @@ const password = ref("");
 const token = useCookie("token");
 const user = useCookie("user");
 const route = useRoute();
+const config = useRuntimeConfig();
 
 async function onRegisterOrLogin() {
   let payload;
@@ -58,9 +59,9 @@ async function onRegisterOrLogin() {
 
   let url;
   if (route.name === "register") {
-    url = "http://localhost:1337/api/auth/local/register";
+    url = `${config.public.strapiURL}/api/auth/local/register`;
   } else {
-    url = "http://localhost:1337/api/auth/local";
+    url = `${config.public.strapiURL}/api/auth/local`;
   }
 
   try {

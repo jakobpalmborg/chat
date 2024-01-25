@@ -17,8 +17,8 @@
         "
       >
         <div class="flex justify-between text-s">
-          
-          <span class="font-bold"
+          <span
+            class="font-bold"
             :class="
               message.attributes.users_permissions_user.data.attributes
                 .username === user
@@ -45,6 +45,7 @@
 <script setup>
 const token = useCookie("token");
 const user = useCookie("user");
+const config = useRuntimeConfig();
 
 const chatHistory = ref([]);
 let paginationStart = 0;
@@ -61,7 +62,7 @@ const headers = new Headers({
 async function getChatHistory() {
   try {
     const response = await fetch(
-      `http://localhost:1337/api/messages?populate=*&filters[chatroom][roomName][$eq]=${props.chatRoom}&filters[createdAt][$lt]=${props.timeUserJoinedChat}&sort=createdAt:desc&pagination[start]=${paginationStart}&pagination[limit]=5`,
+      `${config.public.strapiURL}/api/messages?populate=*&filters[chatroom][roomName][$eq]=${props.chatRoom}&filters[createdAt][$lt]=${props.timeUserJoinedChat}&sort=createdAt:desc&pagination[start]=${paginationStart}&pagination[limit]=5`,
       {
         headers,
       }
