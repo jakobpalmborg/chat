@@ -20,19 +20,9 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
-  app: {
-    head: {
-      meta: [
-      {
-        script: [
-          {
-            src: '~/plugins/hotjar.js', body: true
-          }
-        ]   
-      }
-      ]
-    }
-  },  
+  plugins: [
+    '~/plugins/hotjar.client.js',
+  ],
   postcss: {
     plugins: {
       tailwindcss: {},
