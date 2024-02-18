@@ -21,7 +21,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
   head: {
-     script: [{src: '~/plugins/hotjar.js', body: true}]   
+    meta: [{
+      script: [{src: '~/plugins/hotjar.js', body: true}]   
+      }]
     },  
   postcss: {
     plugins: {
